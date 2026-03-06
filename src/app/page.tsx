@@ -149,8 +149,26 @@ export default function Home() {
 
   async function duplicateMonth() {
     if (!selectedMonth) return;
-    await api(`/api/months/${selectedMonth.id}/duplicate`, { method: "POST" });
-    await loadMonths();
+    try {
+      await api(`/api/months/${selectedMonth.id}/duplicate`, { method: "POST" });
+      await loadMonths();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo duplicar el mes");
+    }
+  }
+
+  async function deleteMonth() {
+    if (!selectedMonth) return;
+    if (!confirm(`¿Seguro que quieres eliminar ${MONTH_NAMES[selectedMonth.month - 1]} ${selectedMonth.year}?`)) {
+      return;
+    }
+
+    try {
+      await api(`/api/months/${selectedMonth.id}`, { method: "DELETE" });
+      await loadMonths();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo eliminar el mes");
+    }
   }
 
   async function addIncome() {
@@ -295,6 +313,9 @@ export default function Home() {
             </button>
             <button className="btn-secondary" onClick={duplicateMonth} disabled={!selectedMonth}>
               <Copy size={16} /> Duplicar mes
+            </button>
+            <button className="btn-secondary" onClick={deleteMonth} disabled={!selectedMonth}>
+              <Trash2 size={16} /> Eliminar mes
             </button>
           </div>
 
