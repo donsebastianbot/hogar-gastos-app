@@ -6,7 +6,7 @@ Aplicación web fullstack para gestión de finanzas domésticas, inspirada en co
 
 - **Frontend**: Next.js (App Router) + React + TypeScript + Tailwind
 - **Backend**: API Routes de Next.js (Node runtime)
-- **Base de datos**: SQLite
+- **Base de datos persistente**: PostgreSQL
 - **ORM**: Prisma
 - **Gráficas**: Recharts
 
@@ -30,7 +30,8 @@ Aplicación web fullstack para gestión de finanzas domésticas, inspirada en co
 - Navegación mes anterior/siguiente
 - Crear nuevo mes
 - **Duplicar mes** (copia estructura al mes siguiente y resetea estados a pendiente)
-- Persistencia en SQLite
+- **Eliminar mes** con confirmación
+- Persistencia real en PostgreSQL
 
 ### Deudas / préstamos
 Cada deuda incluye:
@@ -132,7 +133,7 @@ hogar-gastos-app/
 
 ---
 
-## Instalación y ejecución
+## Instalación y ejecución (local)
 
 ### 1) Instalar dependencias
 
@@ -144,6 +145,7 @@ npm install
 
 ```bash
 cp .env.example .env
+# luego edita .env con tu DATABASE_URL de postgres
 ```
 
 ### 3) Migrar base de datos
@@ -165,6 +167,19 @@ npm run dev
 ```
 
 Abrir: `http://localhost:3000`
+
+---
+
+## Deploy en Vercel con persistencia
+
+### Opción recomendada: Prisma Postgres (Vercel Marketplace)
+
+1. Añade integración Prisma Postgres al proyecto en Vercel.
+2. Vercel inyectará `DATABASE_URL` (production / preview / development).
+3. Lanza una migración inicial con Prisma contra esa URL.
+4. Ejecuta seed para cargar datos demo.
+
+> Esta configuración evita la pérdida de datos que ocurre con SQLite local en serverless.
 
 ---
 
