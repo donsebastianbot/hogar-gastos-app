@@ -1,4 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import { ensureSqliteTmpDatabase } from "@/lib/sqlite-bootstrap";
+
+ensureSqliteTmpDatabase();
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
