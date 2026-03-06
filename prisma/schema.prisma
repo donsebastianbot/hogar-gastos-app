@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentStatus {
+  PENDIENTE
+  LIQUIDADO
+}
+
+model Month {
+  id        String            @id @default(cuid())
+  year      Int
+  month     Int
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  incomes          Income[]
+  debts            Debt[]
+  fixedExpenses    FixedExpense[]
+  variableExpenses VariableExpense[]
+
+  @@unique([year, month])
+  @@index([year, month])
+}
+
+model Income {
+  id        String   @id @default(cuid())
+  source    String
+  amount    Float
+  monthId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  month Month @relation(fields: [monthId], references: [id], onDelete: Cascade)
+
+  @@index([monthId])
+}
+
+model Debt {
+  id             String        @id @default(cuid())
+  name           String
+  initialTotal   Float
+  remainingTotal Float
+  monthlyFee     Float
+  status         PaymentStatus @default(PENDIENTE)
+  isPaid         Boolean       @default(false)
+  monthId        String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  month Month @relation(fields: [monthId], references: [id], onDelete: Cascade)
+
+  @@index([monthId])
+}
+
+model FixedExpense {
+  id        String        @id @default(cuid())
+  name      String
+  amount    Float
+  status    PaymentStatus @default(PENDIENTE)
+  monthId   String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  month Month @relation(fields: [monthId], references: [id], onDelete: Cascade)
+
+  @@index([monthId])
+}
+
+model VariableExpense {
+  id        String        @id @default(cuid())
+  name      String
+  amount    Float
+  status    PaymentStatus @default(PENDIENTE)
+  category  String?
+  date      DateTime?
+  monthId   String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  month Month @relation(fields: [monthId], references: [id], onDelete: Cascade)
+
+  @@index([monthId])
+}
